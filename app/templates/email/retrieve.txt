@@ -1,0 +1,2 @@
+<h1> 你好{{ username }}</h1>
+<p> 找回密码请点击右边链接,<a href="{{ url_for('user.find',token=token,username=current_user.username,_external=True) }}">点我找回密码</a></p>

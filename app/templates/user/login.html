@@ -1,0 +1,11 @@
+{% extends 'common/base.html' %}
+
+{% block title %}用户登录{% endblock %}
+
+{% block page_content %}
+
+{{ wtf.quick_form(form) }}
+    <br>
+<a href="{{ url_for('user.register') }}"class="btn btn-primary " role="button">点我注册</a>
+    <a href="{{ url_for('user.retrieve') }}" class="btn btn-primary  " role="button" style="margin-left: 20px"> 忘记密码?</a>
+{% endblock %}

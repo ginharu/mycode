@@ -1,0 +1,137 @@
+{% extends 'common/base.html' %}
+
+{% block title %}首页
+{% endblock %}
+
+{% block personResource %}
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+{% endblock %}
+
+{% block page_content %}
+    {{ wtf.quick_form(form) }}
+
+    <style type="text/css">
+    h4{
+        font-size: 12px;
+
+    }
+    </style>
+
+    <script src="{{ url_for('static',filename='js/jquery.js') }}"></script>
+    <script>
+     $(document).ready(function(){
+           $(".repbt").click(function(){
+               var id = $(this).attr('id');
+               console.log(id);
+               var appear = $(this).parent().next('div');
+               if(appear.css("display")== 'none'){
+                   appear.css('display','block');
+                   appear.prev().children().eq(0).html('取消回复');
+               }else {
+                   appear.css('display','none');
+                   appear.prev().children().eq(0).html('回复TA');
+{#                   appear.children().children().last().removeClass('rep')#}
+               }
+                appear.children().children().last().addClass('rep')
+               window.pid = id
+
+
+           });
+
+{#           $('.repform1').each(function () {#}
+{#                   $(this).click(function () {#}
+{#                       var pid = window.pid;#}
+{#                   var data = {'id':pid};#}
+{#                   $.ajax({#}
+{#                       type:'POST',#}
+{#                       url:'{{ url_for('reply.repajax') }}',#}
+{#                       data:data,#}
+{#                       async:true,#}
+{#                       success:function (data) {#}
+{#                           console.log('回复成功')#}
+{#                       }#}
+{#                   })#}
+{##}
+{#               })#}
+{#               })#}
+     });
+
+
+
+    function responseclick(e) {
+        var idvaue = e.id
+        var hidden_area = e.parentNode.nextSibling['nextSibling']['firstElementChild'].firstChild['nextSibling']
+                hidden_area.value = idvaue
+                console.log(hidden_area)
+    }
+
+
+    function del() {
+        var msg = "你确定要删除吗";
+        if (confirm(msg)==true){
+        return true;
+        }else{
+        return false;
+        }
+    }
+
+
+
+    </script>
+
+
+    {% for p in posts %}
+        <hr />
+        <div class="media" id="divContent">
+            <div class="media-left">
+                <a href="#">
+                    <img class="media-object" style="width: 64px; height: 64px;" src="{{ url_for('static', filename='upload/'+p.user.icon) }}" alt="icon">
+                </a>
+            </div>
+            <div class="media-body">
+                <div style="float: right;">{{ moment(p.timestamp).fromNow() }}</div>
+                <h4 class="media-heading">{{ p.user.username }}</h4>
+                {{ p.content }}
+
+                <div style="margin-top: 5px; overflow: hidden" class="favorite">
+                <button style="float: left" type="button" class="btn btn-primary repbt"  id="{{ p.id }}" onclick="responseclick(this)" style="display: block"> 回复TA</button>
+                    {% if p.uid == current_user.id %}
+                    <a style="float: right" href="{{ url_for('reply.postdel' ,id=p.id)}}" class="btn btn-danger" onclick="return del()">删除</a>
+                    {% endif %}
+                </div>
+
+                <div class="repform1" style="display:none">
+                    {{ wtf.quick_form(repform) }}
+                </div>
+
+
+                {% for r in replys %}
+                    {% for rid in r.posts %}
+                        {% if rid.id == p.id %}
+                            <div class="media">
+                                <div class="media-left media-middle">
+                                        <img class="media-object" style="width: 50px;height: 50px" src="{{ url_for('static',filename='upload/'+r.user.icon) }}" alt="...">
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="media-heading">{{ r.user.username }}</h4>
+                                    <h4 >{{ r.content }}</h4>
+                                    {% if r.uid == current_user.id %}
+                                        <h4><span><a href="{{ url_for('reply.repdel' ,id=r.id)}}" class="btn btn-danger btn-xs"  onclick="return del()">删除</a></span></h4>
+                                    {% endif %}
+
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+                {% endfor %}
+
+            </div>
+        </div>
+    {% endfor %}
+    <hr />
+    {# 显示分页导航条，ulr拼接的多个参数请以简直对传递 #}
+    {{ pagination_show(pagination, 'main.index', abc='xxx') }}
+
+{% endblock %}

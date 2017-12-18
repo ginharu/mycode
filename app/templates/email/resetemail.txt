@@ -1,0 +1,2 @@
+<h1> 你好 {{ username }}</h1>
+<p> 重置邮箱请点击右边链接,<a href="{{ url_for('user.changeemail',token=token,_external=True) }}">重置</a></p>
